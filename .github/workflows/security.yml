@@ -1,0 +1,43 @@
+name: Security Checks
+
+on: [push]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x" # python-version-file: "pyproject.toml"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+
+      - name: Export requirements.txt from uv
+        run: uv export --format requirements.txt > requirements.txt
+
+      - name: Install packages (.venv)
+        run: |
+          python -m venv .venv
+          source .venv/bin/activate
+          echo PATH=$PATH >> $GITHUB_ENV
+          uv pip install vulture bandit
+
+      - name: Dead Code (Vulture)
+        run: vulture --exclude .venv,tests --min-confidence 70 .
+
+      - name: Code Vulnerability Scan (Bandit)
+        run: |
+          source .venv/bin/activate
+          bandit -r . --severity-level medium --confidence-level medium -x ./.venv/
+
+      - name: Secret Scanning (TruffleHog)
+        uses: trufflesecurity/trufflehog@main
+        with:
+          extra_args: --results=verified,unknown

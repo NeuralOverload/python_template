@@ -1,0 +1,51 @@
+repos:
+  # 1. Commit message convention
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v4.8.3
+    hooks:
+      - id: commitizen
+        stages:
+          - commit-msg
+
+  # 2. Basic hygiene (whitespace, EOL, YAML checks)
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+
+  # 3. Spelling and formatting
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.4.1
+    hooks:
+      - id: codespell
+
+  - repo: https://github.com/PyCQA/docformatter
+    rev: v1.7.7
+    hooks:
+      - id: docformatter
+        additional_dependencies: [tomli]
+        args: ["--in-place", "-r", "--black", "--style", "sphinx", "."]
+
+  # 4. Linting & formatting (Ruff)
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.12.3
+    hooks:
+      - id: ruff-check
+        args: [--fix]
+      - id: ruff-format
+
+  # 5. Code complexity
+  - repo: https://github.com/rubik/xenon
+    rev: v0.9.3
+    hooks:
+      - id: xenon
+        args: ['--max-absolute=B', '--max-modules=C', '--max-average=B']
+
+  # 6. Dependency analysis
+  - repo: https://github.com/fpgmaas/deptry.git
+    rev: "0.23.0"
+    hooks:
+      - id: deptry
