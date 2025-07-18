@@ -1,0 +1,8 @@
+{
+  "typeCheckingMode": "strict",
+  "exclude": ["tests", "docs", "**/__pycache__", "scratch"],
+  "reportMissingImports": true,
+  "reportUnusedImport": true,
+  "reportUnusedVariable": true,
+  "reportOptionalSubscript": true
+}
